@@ -11,14 +11,20 @@
   <div id="app">
     <h1>Schulte Sheet</h1>
 
-    <label for="gridSize">Grid Size:</label>
+    <!-- <label for="gridSize">Grid Size:</label>
     <select id="gridSize">
       <option value="3">3×3</option>
-      <option value="4">4×4</option>
       <option value="5" selected>5×5</option>
-      <option value="6">6×6</option>
       <option value="7">7×7</option>
-    </select>
+    </select> -->
+
+    <div id="size-buttons">
+      Grid Size:
+      <button data-size="3">3×3</button>
+      <button data-size="5" class="active">5×5</button>
+      <button data-size="7">7×7</button>
+      <button data-size="9">9×9</button>
+    </div>
 
     <div id="sound-settings">
       <button id="toggle-sound">Sound: On</button>

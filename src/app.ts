@@ -4,7 +4,6 @@ let startTime: number | null = null;
 let intervalId: ReturnType<typeof setInterval>;
 let soundEnabled: boolean = true;
 
-const sizeSelect = document.getElementById("gridSize") as HTMLSelectElement;
 const gridEl = document.getElementById("grid")!;
 const timerEl = document.getElementById("timer")!;
 const restartBtn = document.getElementById("restart")!;
@@ -30,6 +29,16 @@ volumeSlider.oninput = () => {
     completeSound.volume = vol;
 };
 
+const sizeButtons = document.querySelectorAll<HTMLButtonElement>("#size-buttons button[data-size]");
+sizeButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    sizeButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    gridSize = parseInt(btn.dataset.size || "5");
+    renderGrid();
+  });
+});
+
 function generateNumbers(size: number): number[] {
     const numbers = Array.from({ length: size * size }, (_, i) => i + 1);
 
@@ -50,7 +59,6 @@ function renderGrid() {
     clearInterval(intervalId);
     timerEl.textContent = "Time: 0.00s";
 
-    gridSize = parseInt(sizeSelect.value);
     gridEl.style.gridTemplateColumns = `repeat(${gridSize}, 60px)`;
 
     const numbers = generateNumbers(gridSize);
@@ -92,6 +100,5 @@ function renderGrid() {
     });
 }
 
-sizeSelect.addEventListener("change", renderGrid);
 restartBtn.addEventListener("click", renderGrid);
 renderGrid();

@@ -29,4 +29,25 @@ body {
     align-items: center;
     margin-top: 10px;
   }
+
+  #timer {
+    margin-top: 5px;
+  }
+
+  #size-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  
+  #size-buttons button {
+    padding: 5px 10px;
+    font-size: 14px;
+  }
+  
+  #size-buttons button.active {
+    background-color: #444;
+    color: white;
+  }
   

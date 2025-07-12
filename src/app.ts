@@ -3,6 +3,8 @@ let expected: number = 1;
 let startTime: number | null = null;
 let intervalId: ReturnType<typeof setInterval>;
 let soundEnabled: boolean = true;
+let currentMode: "numbers" | "letters" = "numbers";
+
 
 const gridEl = document.getElementById("grid")!;
 const timerEl = document.getElementById("timer")!;
@@ -12,13 +14,18 @@ const defaultVolume = 0.1
 const correctSound = new Audio("sounds/correct.wav");
 const wrongSound = new Audio("sounds/wrong.wav");
 const completeSound = new Audio("sounds/complete.wav");
+const clickSound = new Audio("sounds/click.mp3");
+clickSound.volume = defaultVolume
 correctSound.volume = defaultVolume
 wrongSound.volume = defaultVolume
 completeSound.volume = defaultVolume
+
 const toggleBtn = document.getElementById("toggle-sound") as HTMLButtonElement;
 const volumeSlider = document.getElementById("volume") as HTMLInputElement;
 
 toggleBtn.onclick = () => {
+    clickSound.currentTime = 0;
+    clickSound.play();
     soundEnabled = !soundEnabled;
     toggleBtn.textContent = soundEnabled ? "Sound: On" : "Sound: Off";
 };
@@ -31,12 +38,28 @@ volumeSlider.oninput = () => {
 
 const sizeButtons = document.querySelectorAll<HTMLButtonElement>("#size-buttons button[data-size]");
 sizeButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    sizeButtons.forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    gridSize = parseInt(btn.dataset.size || "5");
-    renderGrid();
-  });
+    btn.addEventListener("click", () => {
+        clickSound.currentTime = 0;
+        clickSound.play();
+
+        sizeButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        gridSize = parseInt(btn.dataset.size || "5");
+        renderGrid();
+    });
+});
+
+const modeButtons = document.querySelectorAll<HTMLButtonElement>("#mode-buttons button[data-mode]");
+modeButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        clickSound.currentTime = 0;
+        clickSound.play();
+
+        modeButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentMode = btn.dataset.mode as "numbers" | "letters";
+        renderGrid();
+    });
 });
 
 function generateNumbers(size: number): number[] {
@@ -44,6 +67,29 @@ function generateNumbers(size: number): number[] {
 
     return numbers.sort(() => Math.random() - 0.5);
 }
+
+function generateLabels(size: number): string[] {
+    const count = size * size;
+    let labels: string[];
+
+    if (currentMode === "numbers") {
+        labels = Array.from({ length: count }, (_, i) => (i + 1).toString());
+    } else {
+        const letters = [];
+        for (let i = 0; i < count; i++) {
+            letters.push(String.fromCharCode(65 + i)); // A-Z...
+        }
+        labels = letters;
+    }
+
+    return labels.sort(() => Math.random() - 0.5)
+}
+
+function expectedLabel(): string {
+    if (currentMode === "numbers") return expected.toString();
+    return String.fromCharCode(64 + expected); // A=65
+}
+
 
 function updateTimer() {
     if (startTime) {
@@ -61,12 +107,12 @@ function renderGrid() {
 
     gridEl.style.gridTemplateColumns = `repeat(${gridSize}, 60px)`;
 
-    const numbers = generateNumbers(gridSize);
+    const numbers = generateLabels(gridSize);
     numbers.forEach(n => {
         const btn = document.createElement("button");
         btn.textContent = n.toString();
         btn.onclick = () => {
-            if (n === expected) {
+            if (n === expectedLabel()) {
                 if (soundEnabled) {
                     correctSound.currentTime = 0;
                     correctSound.play();

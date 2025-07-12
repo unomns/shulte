@@ -51,3 +51,20 @@ body {
     color: white;
   }
   
+  #mode-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  
+  #mode-buttons button {
+    padding: 5px 10px;
+    font-size: 14px;
+  }
+  
+  #mode-buttons button.active {
+    background-color: #444;
+    color: white;
+  }
+  

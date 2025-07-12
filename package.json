@@ -1,0 +1,14 @@
+{
+  "name": "schulte",
+  "version": "1.0.0",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && electron ."
+  },
+  "devDependencies": {
+    "@types/electron": "^1.6.12",
+    "@types/node": "^24.0.13",
+    "typescript": "^5.8.3"
+  }
+}

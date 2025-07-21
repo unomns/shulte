@@ -1,4 +1,5 @@
 let gridSize: number = 5;
+let gridElWidth: number = 80;
 let expected: number = 1;
 let startTime: number | null = null;
 let intervalId: ReturnType<typeof setInterval>;
@@ -24,8 +25,7 @@ const toggleBtn = document.getElementById("toggle-sound") as HTMLButtonElement;
 const volumeSlider = document.getElementById("volume") as HTMLInputElement;
 
 toggleBtn.onclick = () => {
-    clickSound.currentTime = 0;
-    clickSound.play();
+    playSound(clickSound)
     soundEnabled = !soundEnabled;
     toggleBtn.textContent = soundEnabled ? "Sound: On" : "Sound: Off";
 };
@@ -39,8 +39,7 @@ volumeSlider.oninput = () => {
 const sizeButtons = document.querySelectorAll<HTMLButtonElement>("#size-buttons button[data-size]");
 sizeButtons.forEach(btn => {
     btn.addEventListener("click", () => {
-        clickSound.currentTime = 0;
-        clickSound.play();
+        playSound(clickSound)
 
         sizeButtons.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
@@ -52,8 +51,7 @@ sizeButtons.forEach(btn => {
 const modeButtons = document.querySelectorAll<HTMLButtonElement>("#mode-buttons button[data-mode]");
 modeButtons.forEach(btn => {
     btn.addEventListener("click", () => {
-        clickSound.currentTime = 0;
-        clickSound.play();
+        playSound(clickSound)
 
         modeButtons.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
@@ -105,7 +103,7 @@ function renderGrid() {
     clearInterval(intervalId);
     timerEl.textContent = "Time: 0.00s";
 
-    gridEl.style.gridTemplateColumns = `repeat(${gridSize}, 60px)`;
+    gridEl.style.gridTemplateColumns = `repeat(${gridSize}, ${gridElWidth}px)`;
 
     const numbers = generateLabels(gridSize);
     numbers.forEach(n => {
@@ -113,12 +111,10 @@ function renderGrid() {
         btn.textContent = n.toString();
         btn.onclick = () => {
             if (n === expectedLabel()) {
-                if (soundEnabled) {
-                    correctSound.currentTime = 0;
-                    correctSound.play();
-                }
+                playSound(correctSound)
 
-                btn.style.background = "green";
+                btn.style.background = "gray";
+                btn.style.color = "white";
                 btn.disabled = true;
                 if (expected === 1) {
                     startTime = performance.now();
@@ -128,15 +124,11 @@ function renderGrid() {
                 expected++;
                 if (expected > gridSize * gridSize) {
                     clearInterval(intervalId);
-                    if (soundEnabled) {
-                        completeSound.currentTime = 0;
-                        completeSound.play();
-                    }
+                    playSound(completeSound)
                 }
             } else {
-                wrongSound.currentTime = 0;
-                wrongSound.play();
-                btn.style.background = "red";
+                playSound(wrongSound)
+                btn.style.background = "gray";
                 setTimeout(() => {
                     btn.style.background = "";
                 }, 200);
@@ -144,6 +136,15 @@ function renderGrid() {
         };
         gridEl.appendChild(btn);
     });
+}
+
+function playSound(sound: HTMLAudioElement) {
+    if (!soundEnabled) {
+        return;
+    }
+
+    sound.currentTime = 0;
+    sound.play();
 }
 
 restartBtn.addEventListener("click", renderGrid);
